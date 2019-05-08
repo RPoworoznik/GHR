@@ -11,7 +11,7 @@ namespace OOPsReview
     //If this class was static, the class would not hold data
     //For a class to hold data, do not make it static, unless you want everyone to have access to that data (read and change)
 
-    public class myData
+    public class FencePanel
     {
         public int Height;
         public int Width;

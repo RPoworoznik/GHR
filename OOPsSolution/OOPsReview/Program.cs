@@ -21,10 +21,10 @@ namespace OOPsReview
             //**An object is a programmer/developer defined datatype
             //If one creates a declarative using just the class name, then this is only a "pointer" that can hold an instance of a class specified
             //Current value of aVariabel is "null"
-            myData aVariable = null;
+            FencePanel aVariable = null;
 
             //If you use the "new" command with a class, the "new" command will "physically" create and instance of the class
-            myData anInstance = new myData();
+            FencePanel anInstance = new FencePanel();
             if (aVariable == null)
             {
                 Console.WriteLine("aVariable has nothing in it");   
