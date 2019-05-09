@@ -21,18 +21,26 @@ namespace OOPsReview
             //**An object is a programmer/developer defined datatype
             //If one creates a declarative using just the class name, then this is only a "pointer" that can hold an instance of a class specified
             //Current value of aVariabel is "null"
-            FencePanel aVariable = null;
+            
 
             //If you use the "new" command with a class, the "new" command will "physically" create and instance of the class
+            //When this statement is executed, the Default Constructor of the FencePanel class will be called on my behalf
             FencePanel anInstance = new FencePanel();
-            if (aVariable == null)
-            {
-                Console.WriteLine("aVariable has nothing in it");   
-            }
-            if (anInstance == null)
-            {
-                Console.WriteLine("anInstance has nothing in it");               
-            }
+            anInstance.Height = 5.8;
+            anInstance.Width = 8.0;
+            anInstance.Style = "Neighbour Friendly";
+
+            Console.WriteLine("Height is: " + anInstance.Height.ToString());
+            Console.WriteLine("Width is: " + anInstance.Width.ToString());
+            Console.WriteLine("Style is: " + anInstance.Style.ToString());
+            Console.WriteLine("Price is: " + anInstance.Price.ToString() + "\n");
+
+            FencePanel aGreedyInstance = new FencePanel(4.0, 6.8, "private", 32.89);
+            Console.WriteLine("Height is: " + aGreedyInstance.Height.ToString());
+            Console.WriteLine("Width is: " + aGreedyInstance.Width.ToString());
+            Console.WriteLine("Style is: " + aGreedyInstance.Style.ToString());
+            Console.WriteLine("Price is: " + aGreedyInstance.Price.ToString() + "\n");
+
             Console.ReadLine();
         }//eom
     }///eoc
