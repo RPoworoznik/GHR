@@ -84,11 +84,10 @@ namespace OOPsReview
         }
 
         //Method (aka "Behaviour")
-        public double EstimatedNumberofPanels(double linearlength, double gatewidth, int numberofgates)
+        public double EstimatedNumberofPanels(double linearlength)
         {
-            double totalgatewidth = gatewidth * numberofgates;
-            double fencewidth = linearlength - totalgatewidth;
-            double numberofpanels = fencewidth / Width;
+            
+            double numberofpanels = linearlength / Width;
             return numberofpanels;
         }
     }

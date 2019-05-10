@@ -34,12 +34,75 @@ namespace OOPsReview
             Console.WriteLine("Width is: " + anInstance.Width.ToString());
             Console.WriteLine("Style is: " + anInstance.Style.ToString());
             Console.WriteLine("Price is: " + anInstance.Price.ToString() + "\n");
-
-            FencePanel aGreedyInstance = new FencePanel(4.0, 6.8, "private", 32.89);
+            //Creation of an instance using a greedy constructor
+            FencePanel aGreedyInstance = new FencePanel(4.0, 6.8, "Private", 32.89);
             Console.WriteLine("Height is: " + aGreedyInstance.Height.ToString());
             Console.WriteLine("Width is: " + aGreedyInstance.Width.ToString());
             Console.WriteLine("Style is: " + aGreedyInstance.Style.ToString());
             Console.WriteLine("Price is: " + aGreedyInstance.Price.ToString() + "\n");
+            //Using instances of classes
+
+            string menuItem = "0";
+            FenceEstimate CustomerFence = new FenceEstimate();
+            //Placing data from the right side into the left side
+            CustomerFence.Fence = aGreedyInstance;
+            CustomerFence.Gates = null;
+            string inputValue;
+            Gate theGate = null;
+            do
+            {
+                theGate = new Gate();
+                Console.Write("Height: ");
+                inputValue = Console.ReadLine();
+                theGate.Height = double.Parse(inputValue);
+                
+                Console.Write("Width: ");
+                inputValue = Console.ReadLine();
+                theGate.Width = double.Parse(inputValue);
+               
+                Console.Write("Style: ");
+                inputValue = Console.ReadLine();
+                theGate.Style = (inputValue);
+              
+                Console.Write("Price: ");
+                inputValue = Console.ReadLine();
+                theGate.Price = double.Parse(inputValue);
+                if (string.IsNullOrEmpty(inputValue))
+                {
+                    theGate.Price = null;
+                }
+                else
+                {
+                    theGate.Price = double.Parse(inputValue);
+                }
+                //The local instance of "Gate" needs to be saved into the FenceEstimate
+                CustomerFence.Gates.Add(theGate);
+
+                Console.Write("Another gate (Y or N): ");
+                inputValue = Console.ReadLine();
+                menuItem = inputValue.ToUpper().Equals("Y") ? "1" : "0";
+
+            } while (menuItem != "0");
+
+            Console.Write("Fence Length: ");
+            inputValue = Console.ReadLine();
+            double linearLength = double.Parse(inputValue);
+
+            //Using the CustomeFence data, calculate the cost
+            double NumberofPanels = CustomerFence.Fence.EstimatedNumberofPanels(linearLength);
+            double FencePrice = Math.Ceiling(NumberofPanels) * double.Parse(CustomerFence.Fence.Price.ToString()); //Ceiling always rounds up; Floor rounds down; Round rounds?
+            double gateCost = 0.0;
+            foreach(Gate item in CustomerFence.Gates)
+            {
+                gateCost += double.Parse (item.Price.ToString());
+            }
+
+            Console.WriteLine("Total Fence Estimate");
+            Console.WriteLine("Number of Panels: " + NumberofPanels.ToString());
+            Console.WriteLine("Cost of Panels: " + FencePrice.ToString());
+            Console.WriteLine("Number of Gates: " + CustomerFence.Gates.Count.ToString());
+            Console.WriteLine("Cost of Gates: " + gateCost.ToString());
+            Console.WriteLine("Total: " + (FencePrice + gateCost).ToString());
 
             Console.ReadLine();
         }//eom

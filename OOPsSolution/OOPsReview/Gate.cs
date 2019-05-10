@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OOPsReview
 {
-    class Gate
+    public class Gate
     {        
         public double Height { get; set; } 
         public double Width { get; set; }
@@ -31,11 +31,9 @@ namespace OOPsReview
         }
         
         public double? Price { get; set; }
-              
-        public Gate()
-        {
-            
-        }
+
+        public Gate() { }
+        
     
         public Gate(double height, double width, string style, double? price)
         {
@@ -44,13 +42,14 @@ namespace OOPsReview
             Style = style;
             Price = price;
         }
-       
-        public double EstimatedNumberofPanels(double linearlength, double gatewidth, int numberofgates)
+        //Read-only property contains NO "set{}"
+        //Data used in this property is data that is currently in the instance of this class
+        public double GateArea
         {
-            double totalgatewidth = gatewidth * numberofgates;
-            double fencewidth = linearlength - totalgatewidth;
-            double numberofpanels = fencewidth / Width;
-            return numberofpanels;
+            get
+            {
+                return Height * Width;
+            }
         }
     }
 }
