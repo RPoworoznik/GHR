@@ -42,18 +42,10 @@ namespace OOPsReview
             Style = style;
             Price = price;
         }
-
-       
-      
-
-        //Read-only property contains NO "set{}"
-        //Data used in this property is data that is currently in the instance of this class
-       
-
+          
         //Read-only property contains NO "set{}"
         //Data used in this property is data that is currently in the instance of this class
         public double GateArea
-
         {
             get
             {
