@@ -41,12 +41,12 @@ namespace OOPsReview
             Console.WriteLine("Style is: " + aGreedyInstance.Style.ToString());
             Console.WriteLine("Price is: " + aGreedyInstance.Price.ToString() + "\n");
             //Using instances of classes
-
+            Console.WriteLine("\nEntering Gate Data\n");
             string menuItem = "0";
             FenceEstimate CustomerFence = new FenceEstimate();
             //Placing data from the right side into the left side
             CustomerFence.Fence = aGreedyInstance;
-            CustomerFence.Gates = null;
+            CustomerFence.Gates = new List<Gate>();
             string inputValue;
             Gate theGate = null;
             do
@@ -84,7 +84,7 @@ namespace OOPsReview
 
             } while (menuItem != "0");
 
-            Console.Write("Fence Length: ");
+            Console.Write("Fence Length: ");           
             inputValue = Console.ReadLine();
             double linearLength = double.Parse(inputValue);
 
@@ -96,8 +96,9 @@ namespace OOPsReview
             {
                 gateCost += double.Parse (item.Price.ToString());
             }
-
+            Console.WriteLine();
             Console.WriteLine("Total Fence Estimate");
+            Console.WriteLine("====================\n");
             Console.WriteLine("Number of Panels: " + NumberofPanels.ToString());
             Console.WriteLine("Cost of Panels: " + FencePrice.ToString());
             Console.WriteLine("Number of Gates: " + CustomerFence.Gates.Count.ToString());
