@@ -42,14 +42,18 @@ namespace OOPsReview
             Style = style;
             Price = price;
         }
-<<<<<<< HEAD
+
        
-        public double GateSize(double linearlength, double gatewidth, int numberofgates)
-=======
+      
+
+        //Read-only property contains NO "set{}"
+        //Data used in this property is data that is currently in the instance of this class
+       
+
         //Read-only property contains NO "set{}"
         //Data used in this property is data that is currently in the instance of this class
         public double GateArea
->>>>>>> adb04a1ffc9d965173e4885f4471ca147341975f
+
         {
             get
             {
