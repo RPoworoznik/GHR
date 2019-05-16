@@ -1,0 +1,64 @@
+﻿@{
+    Layout = "~/_Layout.cshtml";
+    Page.Title = "TextBoxes";
+
+    //Retrieve darta from the form controls
+    //The form controls can be accessed via the Request object
+    //The Request object has several collections
+    //Form controls are found in the .Form collection
+    //a particular control is referenced by it's name in the Form collection
+    //Syntax: Request.Form["namestring"]
+    //GENERALLY ALL data from controls are strings
+
+    var leftdata = Request.Form["controlleft"]; //Retrieve the control contents
+    var rightdata = Request.Form["controlright"]; //Retrieve the control contents
+    var thebutton = Request.Form["formbutton"]; //Retrieve the control contents
+    var results = ""; 
+}
+
+@section banner{
+    <h1>TextBoxes</h1>
+}
+
+@if (IsPost)
+{
+    <p>You pressed the @thebutton  button</p>
+
+    if (thebutton.Equals("Left"))
+    {
+        results = leftdata;
+    }
+    else
+    {
+        results = rightdata;
+    }
+}
+<!--"post" method is hidden-->
+<form id="theForm" method="post">
+    <div class="row">
+        <div class="col-md-offset-4">
+            <label id="Concerns" for="Results">Results:</label>
+            <!--"input" offers validations-->
+            <!--"for" statement (above) matches up with "id" statement (below)-->
+            <input type="text" id="Results" name="Results" readonly value="@results"/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <label for="controlleft" id="lefttitle">Left Side</label>
+            <input type="text" id="controlleft" name="controlleft" placeholder="enter some data" value="@leftdata"/>
+            <br />
+            <!--submit leaves server; reset stays on browser-->
+            <input type="submit" id="formbutton" name="formbutton" class="btn" value="Left" />
+        </div>
+        <div class="col-md-6">
+            <label for="controlright" id="righttitle">Right Side</label>
+            <input type="text" id="controlright" name="controlright" placeholder="enter some data" value="@rightdata"/>
+            <br />
+            <!--submit leaves server; reset stays on browser-->
+            <input type="submit" id="formbutton" name="formbutton" class="btn" value="Right" />
+        </div>
+    </div>
+</form>
+
+
