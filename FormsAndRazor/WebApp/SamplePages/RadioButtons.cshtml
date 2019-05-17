@@ -1,8 +1,83 @@
 ﻿@{
     Layout = "~/_Layout.cshtml";
     Page.Title = "RadioButtons";
+
+    var languagegroup = Request.Form["LanguageGroup"];
+    var scriptgroup = Request.Form["ScriptGroup"];
+    
 }
 
+    
 @section banner{
     <h1>RadioButtons</h1>
 }
+
+@if (IsPost)
+{
+    //Do none of this logic unless you are in a post back scenario
+
+    //Validate input
+    if (string.IsNullOrEmpty(languagegroup) || string.IsNullOrEmpty(scriptgroup))
+    {
+        <p><span style="color:firebrick">Make a selection from both coding choices</span></p>
+        languagegroup = "";
+        scriptgroup = "";
+    }
+    else
+    {
+        if (languagegroup.Equals("C#", StringComparison.OrdinalIgnoreCase))
+        {
+            <p>You will enjoy CPSC1517 course.  We use C#!</p>
+
+        }
+        else
+        {
+            <p>Too bad. Unfortuantely, the CPSC1517 does not use @languagegroup</p>
+        }
+        if (scriptgroup.Equals("Razor", StringComparison.OrdinalIgnoreCase))
+        {
+            <p>You will enjoy CPSC1517 course.  We use Razor!</p>
+
+        }
+        else
+        {
+            <p>Too bad. Unfortuantely, the CPSC1517 does not use @scriptgroup</p>
+        }
+    }
+}
+else
+{
+    //The else side is only done when the page is considered the 1st time
+    //This is an excellent place to put logic that needs to happen when the page is being generated for the 1st time
+    languagegroup = "";
+    scriptgroup = "";
+}
+
+
+<form id="theform" method="post">
+    <div class="row">
+        <div class="col-sm-offset-1">
+            <label id="LanguageGrouplabel" for="LanguageGroup">
+                Select your favourite programming language
+            </label><br />
+            <input type="radio" id="LanguageGroup" name="LanguageGroup" value="C#" checked='@(languagegroup.Equals("C#")?true:false)'/>C#<br />
+            <input type="radio" id="LanguageGroup" name="LanguageGroup" value="VB" checked='@(languagegroup.Equals("VB")?true:false)'/>Visual Basic<br />
+            <input type="radio" id="LanguageGroup" name="LanguageGroup" value="Cobol" checked='@(languagegroup.Equals("Cobol")?true:false)'/>Cobol<br />
+            <input type="radio" id="LanguageGroup" name="LanguageGroup" value="Fortran" checked='@(languagegroup.Equals("Fortran")?true:false)'/>Fortran<br />
+
+            <label id="ScriptGrouplabel" for="ScriptGroup">
+                Select your favourite scripting code
+            </label><br />
+            <input type="radio" id="ScriptGroup" name="ScriptGroup" value="JavaScript" checked='@(scriptgroup.Equals("JavaScript")?true:false)'/>JavaScript<br />
+            <input type="radio" id="ScriptGroup" name="ScriptGroup" value="Razor" checked='@(scriptgroup.Equals("Razor")?true:false)'/>Razor<br />
+            <input type="radio" id="ScriptGroup" name="ScriptGroup" value="PHP" checked='@(scriptgroup.Equals("PHP")?true:false)'/>PHP<br />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-offset-1">
+            <input type="submit" class="btn btn-primary" id="formButton" name="formButton" />
+        </div>
+
+    </div>
+
+</form>
