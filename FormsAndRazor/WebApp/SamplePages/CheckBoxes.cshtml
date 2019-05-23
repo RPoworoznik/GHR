@@ -36,12 +36,12 @@
         <div class="col-sm-offset-1">
             <label id="CheckboxGrouplabel" for="CheckboxGroup">
                 Select your favourite gaming platforms:
-            </label>
+            </label><br/>
 
             <input type="checkbox" id="CheckboxGroup" name="CheckboxGroup" value="PS4"
                    @(Array.IndexOf(choice.Split(','), "PS4") >= 0? "checked" : "")/>PS4<br />
             <input type="checkbox" id="CheckboxGroup" name="CheckboxGroup" value="Cell Phone"
-                   @(Array.IndexOf(choice.Split(','), "Cell Phone") >= 0? "checked" : "")/>Phone<br />
+                   @(Array.IndexOf(choice.Split(','), "Cell Phone") >= 0? "checked" : "")/>Cell Phone<br />
             <input type="checkbox" id="CheckboxGroup" name="CheckboxGroup" value="NDS"
                    @(Array.IndexOf(choice.Split(','), "Nintendo DS") >= 0? "checked" : "")/>Nintendo <br />
             <input type="checkbox" id="CheckboxGroup" name="CheckboxGroup" value="Wii"

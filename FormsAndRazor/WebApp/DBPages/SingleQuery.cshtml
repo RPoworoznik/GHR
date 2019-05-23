@@ -1,0 +1,68 @@
+﻿@{
+    //Need microsoft.aspnet.webpages.(web)data
+    Layout = "~/_Layout.cshtml";
+    Page.Title = "SingleQuery";
+
+    var searcharg = Request.Form["SearchArg"];
+    var thebutton = Request.Form["formbutton"];//change all to FormButton later
+    var regionid = "";
+    var description = "";
+
+    //Open a connection to the database
+    //Use the connection string name attribute value
+
+    var db = Database.Open("NWDB");
+
+    //Create the SQL query command to retrieve the desired data
+    //If the query command requires a parameter value, then you will need to you a placeholder
+    //Placeholder syntax is @n where n i 0, 1, 2, ...
+    //You can have multiple placeholders
+    //HARD CODED STRINGS CANNOT BE OVER MULTIPLE PHYSICAL LINES!
+
+    var querycommand = "SELECT RegionID, Region Description " 
+                        + "FROM Region "
+                        + "WHERE RegionID = @0";
+
+    //Execute you command
+    //The result will be one of the following: 
+    //a) a single record
+    //b) a data set of 0, 1, or more records
+    //c) a single value
+    //Your expected results will determine how you will execute your command
+    //a) .QuerySingle()
+    //b) .Query()
+    //c) .QueryValue()
+    //Our search is by primary key, therefore our expected result is (a) single record
+    //The .QuerySingle(command string[,comma delimiter list of parameter values])
+    //Order of parameter values MUST match the order of placeholders
+
+    var datainfo = db.QuerySingle(querycommand, searcharg);
+}
+
+@section banner{
+    <h1>Single Record Query</h1>
+}
+
+    <form id="theForm" method="post">
+        
+        <div class="row">
+            <div class="col-md-6">
+                <label for="searchArg" id="label1">Enter a Region ID</label>
+                <input type="text" id="searchArg" name="searchArg" value="@searcharg"  placeholder="enter Region ID"/>
+                <br />
+                <!--submit leaves server; reset stays on browser-->
+                <input type="submit" id="formbutton" name="formbutton" class="btn btn-primary" value="Submit" />&nbsp;&nbsp;
+                <input type="submit" id="formbutton" name="formbutton" class="btn" value="Clear" />&nbsp;&nbsp;
+            </div>
+
+            <div class="col-md-6">
+                <label for="RegionID" id="label2">Region ID:</label>&nbsp;
+                <input type="text" id="RegionID" name="RegionID" value="@regionid" readonly="readonly" />
+                <br />
+                <label for="Description" id="label3">Description</label>
+                <input type="text" id="Description" name="Description" value="@description" readonly="readonly" />
+                <br />
+               
+            </div>
+        </div>
+    </form>
