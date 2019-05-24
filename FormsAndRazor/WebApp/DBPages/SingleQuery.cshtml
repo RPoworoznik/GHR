@@ -1,7 +1,7 @@
 ﻿@{
     //Need microsoft.aspnet.webpages.(web)data
     Layout = "~/_Layout.cshtml";
-    Page.Title = "SingleQuery";
+    Page.Title = "Single Record Query";
 
     var searcharg = Request.Form["SearchArg"];
     var thebutton = Request.Form["formbutton"];//change all to FormButton later
@@ -19,12 +19,12 @@
     //You can have multiple placeholders
     //HARD CODED STRINGS CANNOT BE OVER MULTIPLE PHYSICAL LINES!
 
-    var querycommand = "SELECT RegionID, Region Description " 
+    var querycommand = "SELECT RegionID, RegionDescription " //Put blank at the end of every line except final one
                         + "FROM Region "
                         + "WHERE RegionID = @0";
 
     //Execute you command
-    //The result will be one of the following: 
+    //The result will be one of the following:
     //a) a single record
     //b) a data set of 0, 1, or more records
     //c) a single value
@@ -40,29 +40,66 @@
 }
 
 @section banner{
-    <h1>Single Record Query</h1>
+    <h1>Database: Single Record Query</h1>
+}
+@if (IsPost)
+{
+    //which button was pressed?
+    if (thebutton.Equals("Clear"))
+    {
+        searcharg = "";
+        regionid = "";
+        description = "";
+    }
+    else
+    {
+        //Validate that a value was supplied to search for
+        if (string.IsNullOrEmpty(searcharg))
+        {
+            <p><span style="color:dodgerblue">Please enter a Region ID:@searcharg</span></p>
+        }
+        //Test if sql returns any data for processing
+        //QueryString(), will check for null
+        //Query(), will check for dataset.Count() == 0
+        else if (datainfo == null)
+        {
+            <p><span style="color:dodgerblue">No region found for the ID:@searcharg</span></p>
+            //Optionally, consider emptying output fields
+            regionid = "";
+            description = "";
+        }
+        else
+        {
+            //Acccessing the data from your sql ooutput can be done
+            //a) via an index  xxxx[n] where n = 0, 1, 2, etc.
+            //b) via property name  xxxx.PropertyName (the PropertyName is the column title string for your query)
+            regionid = datainfo.RegionID.ToString();//regionid = datainfo.[0].ToString(); will also work as well
+            description = datainfo.RegionDescription;
+        }
+    }
 }
 
-    <form id="theForm" method="post">
-        
-        <div class="row">
-            <div class="col-md-6">
-                <label for="searchArg" id="label1">Enter a Region ID</label>
-                <input type="text" id="searchArg" name="searchArg" value="@searcharg"  placeholder="enter Region ID"/>
-                <br />
-                <!--submit leaves server; reset stays on browser-->
-                <input type="submit" id="formbutton" name="formbutton" class="btn btn-primary" value="Submit" />&nbsp;&nbsp;
-                <input type="submit" id="formbutton" name="formbutton" class="btn" value="Clear" />&nbsp;&nbsp;
-            </div>
 
-            <div class="col-md-6">
-                <label for="RegionID" id="label2">Region ID:</label>&nbsp;
-                <input type="text" id="RegionID" name="RegionID" value="@regionid" readonly="readonly" />
-                <br />
-                <label for="Description" id="label3">Description</label>
-                <input type="text" id="Description" name="Description" value="@description" readonly="readonly" />
-                <br />
-               
-            </div>
+<form id="theForm" method="post">
+
+    <div class="row">
+        <div class="col-md-6">
+            <label for="searchArg" id="label1">Enter a Region ID</label>
+            <input type="text" id="searchArg" name="searchArg" value="@searcharg" placeholder="enter Region ID" />
+            <br />
+            <!--submit leaves server; reset stays on browser-->
+            <input type="submit" id="formbutton" name="formbutton" class="btn btn-primary" value="Submit" />&nbsp;&nbsp;
+            <input type="submit" id="formbutton" name="formbutton" class="btn" value="Clear" />&nbsp;&nbsp;
         </div>
-    </form>
+
+        <div class="col-md-6">
+            <label for="RegionID" id="label2">Region ID:</label>&nbsp;
+            <input type="text" id="RegionID" name="RegionID" value="@regionid" readonly="readonly" />
+            <br />
+            <label for="Description" id="label3">Description</label>
+            <input type="text" id="Description" name="Description" value="@description" readonly="readonly" />
+            <br />
+
+        </div>
+    </div>
+</form>
