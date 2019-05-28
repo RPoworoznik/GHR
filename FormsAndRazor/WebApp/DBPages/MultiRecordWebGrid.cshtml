@@ -23,9 +23,15 @@
                         WHERE CategoryID = @0";
     var datainfo = db.Query(querycommand, cid);
 
+    var queryCategory = @"SELECT CategoryName
+                          FROM Categories 
+                          WHERE CategoryID = @0";
+    var categoryname = db.QueryValue(queryCategory, cid);
+
     //WebGrid is an object, thus an instance of the object must be created
     //The "default" constructor for WebGrid needs to be given the data set
-    var gridinstance = new WebGrid(datainfo);
+    //To control page size, specify the page size as you create your instance
+    var gridinstance = new WebGrid(datainfo, rowsPerPage:5);
 }
 @section banner{
     <h1>Database: Multiple Record Web Grid</h1>
@@ -44,9 +50,36 @@
 <br/>
 <div class="row">
     <div class="col-md-offset-1">
-        <span style="font-size:x-large">Products for @cid</span>
+        <span style="font-size:x-large">Products for @categoryname</span>
         <!--default WebGrid-->
-        @gridinstance.GetHtml();
+        @*@gridinstance.GetHtml()*@
+
+        <!--Customized WebGrid
+            a) Use bootstrap customized classes to spread out columns
+            b) Customized the pager (rowPerPage on new WebGrid command above)
+            c) Select specific columns for use columns: inatance.Columns;
+                within the .columns, you specify each column you want from your record set:
+                gridinstance.Column(columnName: "xxx", header: "xxx", canSort:true|false,
+                form: escape to C# code)
+            d) Add an additional field that does not exist on the query record-->
+        @gridinstance.GetHtml(tableStyle: "table table-bordered table-striped table-hover",
+                              mode: WebGridPagerModes.All,
+                              firstText: "Start", lastText: "End",
+                              columns: gridinstance.Columns(gridinstance.Column(columnName: "ProductID", header: "ID",
+                              canSort:true),                              
+                              gridinstance.Column(columnName: "ProductName", header: "Product",
+                              canSort: true),
+                              gridinstance.Column(columnName: "UnitPrice", header: "$",
+                              canSort: false, format: (item) => item.UnitPrice.ToString("0.00")),
+                              gridinstance.Column(columnName: "Discontinued", header: "Disc",
+                              canSort: false, format: @<input name="Discontinued" type="checkbox" value="@item.Discontinued" 
+                                                              disabled="disabled" @(item.Discontinued == true?"Checked":null)/>),
+                              gridinstance.Column(header: "", format:@<text>
+                              <a href="~/DBPages/WebGridDestination.cshtml?pid=@item.ProductID" onclick="return confirm('Are you sure you wish to
+                                view the product details of @item.ProductName')">View</a></text>)))
+        <br/>
+        <a href="MultiRecordQuery.cshtml">Back to Categories</a>
+
     </div>
 </div>
 

@@ -1,0 +1,100 @@
+﻿@{
+    Layout = "~/_Layout.cshtml";
+    Page.Title = "CRUD Page";
+
+    
+    var productname = "";
+    var supplierid = "";
+    var categoryid = "";
+    var quantityperunit = "";
+    var unitprice = "";
+    var unitsinstock = "";
+    var unitsonorder = "";
+    var reorderlevel = "";
+    var thebutton = Request.Form["formbutton"];
+}
+@section banner{
+    <h1>Database: CRUD Product</h1>
+
+}
+@if (IsPost)
+{
+    //When you have multiple buttons, a good practice is to determine
+    //  what action to do for the press button FIRST!
+    if (thebutton.Equals("Clear"))
+    {
+        <p class="text-center well">You cleared the current input...</p>
+    }
+    else
+    {
+        
+        
+        supplierid = Request.Form["SupplierID"];
+        categoryid = Request.Form["CategoryID"];
+        quantityperunit = Request.Form["QuantityPerUnit"];
+        unitprice = Request.Form["UnitPrice"];
+        unitsinstock = Request.Form["UnitsInStock"];
+        unitsonorder = Request.Form["UnitsOnOrder"];
+        reorderlevel = Request.Form["ReorderLevel"];
+
+        //Assume for now that all data is valid
+        //CRUD Operations are expected to be performed with user-friendly error handling:
+        try
+        {
+            var db = Database.Open("NWDB");
+            var insertcommand = @"INSERT INTO Products (ProductName, SupplierID, CategoryID,
+        QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued)
+        VALUES (@0, @1, @2, @3, @4, @5, @6, @7, 0)";
+            db.Execute(insertcommand, productname, string.IsNullOrEmpty(supplierid) ? null : supplierid,
+                                                               string.IsNullOrEmpty(categoryid) ? null : categoryid,
+                                                               string.IsNullOrEmpty(quantityperunit) ? null : quantityperunit,
+                                                               string.IsNullOrEmpty(unitprice) ? null : unitprice,
+                                                               string.IsNullOrEmpty(unitsinstock) ? null : unitsinstock,
+                                                               string.IsNullOrEmpty(unitsonorder) ? null : unitsonorder,
+                                                               string.IsNullOrEmpty(reorderlevel) ? null : reorderlevel);
+
+            //There are only two possibilities for an insert: works OR aborts (handeld by try/catch
+
+            <p class="text-center well"><span style="color:green"><strong>Product has been added</strong><span /></p>
+            
+        }
+        catch (Exception ex)
+        {
+            <p class="text-center well"><span style="color:firebrick"><strong>@ex.Message</strong><span /></p>
+        }
+    }
+}
+<form id="theform" method="post">
+    <div class="row">
+        <div class="col-md-6 text-right">
+            
+            <label for="ProductName">Name:</label><br />
+            <label for="SupplierID">Supplier:</label><br />
+            <label for="CategoryID">Category:</label><br />
+            <label for="QuantityPerUnit">Quantity Per Unit:</label><br />
+            <label for="UnitPrice">Price:</label><br />
+            <label for="UnitsInStock">QoH:</label><br />
+            <label for="UnitsOnOrder">QoO:</label><br />
+            <label for="ReorderLevel">RoL:</label><br />
+            <br />
+        </div>
+        <div class="col-md-6 text-left">
+           
+            <input type="text" id="ProductName" name="ProductName" value="@productname" /><br />
+            <input type="text" id="SupplierID" name="SupplierID" value="@supplierid" /><br />
+            <input type="text" id="CategoryID" name="CategoryID" value="@categoryid" /><br />
+            <input type="text" id="QuantityPerUnit" name="QuantityPerUnit" value="@quantityperunit" /><br />
+            <input type="text" id="UnitPrice" name="UnitPrice" value="@unitprice" /><br />
+            <input type="text" id="UnitsInStock" name="UnitsInStock" value="@unitsinstock" /><br />
+            <input type="text" id="UnitsOnOrder" name="UnitsOnOrder" value="@unitsonorder" /><br />
+            <input type="text" id="ReorderLevel" name="ReorderLevel" value="@reorderlevel" /><br />
+            <br />
+        </div>
+    </div>
+    <div class="row">
+        <div class="text-center">
+            <input type="submit" id="formbutton" name="formbutton" class="btn btn-primary" value="Add" />
+            <input type="submit" id="formbutton" name="formbutton" class="btn" value="Clear" />
+        </div>
+    </div>
+</form>
