@@ -2,7 +2,7 @@
     Layout = "~/_Layout.cshtml";
     Page.Title = "CRUD Page";
 
-    
+
     var productname = "";
     var supplierid = "";
     var categoryid = "";
@@ -12,10 +12,31 @@
     var unitsonorder = "";
     var reorderlevel = "";
     var thebutton = Request.Form["formbutton"];
+
+    //Obtain two lists: Supplier List and Category List
+    var db = Database.Open("NWDB");
+    var supplierquery = @"SELECT SupplierID, CompanyName
+FROM Suppliers
+ORDER BY CompanyName";
+    var categoryquery = @"SELECT CategoryID, CategoryName
+FROM Categories
+ORDER BY CategoryName";
+    var supplierlist = db.Query(supplierquery);
+    var categorylist = db.Query(categoryquery);
+
+    //These validator controls execute on the client and server sides
+    Validation.Add("ProductName", Validator.Required("Product Name is required"),
+        Validator.StringLength(10, 1, "Product name is limited to 160 characters"));
+    Validation.Add("QuantityPerUnit",
+        Validator.StringLength(20, 0, "Quantity per unit is limited to 20 characters"));
+    Validation.Add("UnitPrice",
+       Validator.Range(0.0, double.MaxValue, "Price must be dollar amount $0.00 or greater"));
+    Validation.Add("UnitsInStock", Validator.Range(0, Int16.MaxValue, "Units in stock must be 0 or greater"));
+    Validation.Add("UnitsOnOrder", Validator.Range(0, Int16.MaxValue, "Units on order must be 0 or greater"));
+    Validation.Add("ReorderLevel", Validator.Range(0, Int16.MaxValue, "Reorder level must be 0 or greater"));
 }
 @section banner{
     <h1>Database: CRUD Product</h1>
-
 }
 @if (IsPost)
 {
@@ -27,48 +48,71 @@
     }
     else
     {
-        
-        
-        supplierid = Request.Form["SupplierID"];
-        categoryid = Request.Form["CategoryID"];
+        productname = Request.Form["ProductName"];
+        supplierid = Request.Form["SupplierList"];
+        categoryid = Request.Form["CategoryList"];
         quantityperunit = Request.Form["QuantityPerUnit"];
         unitprice = Request.Form["UnitPrice"];
         unitsinstock = Request.Form["UnitsInStock"];
         unitsonorder = Request.Form["UnitsOnOrder"];
         reorderlevel = Request.Form["ReorderLevel"];
 
-        //Assume for now that all data is valid
-        //CRUD Operations are expected to be performed with user-friendly error handling:
-        try
+        //Data is validated
+        if (Validation.IsValid())
         {
-            var db = Database.Open("NWDB");
-            var insertcommand = @"INSERT INTO Products (ProductName, SupplierID, CategoryID,
-        QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued)
-        VALUES (@0, @1, @2, @3, @4, @5, @6, @7, 0)";
-            db.Execute(insertcommand, productname, string.IsNullOrEmpty(supplierid) ? null : supplierid,
-                                                               string.IsNullOrEmpty(categoryid) ? null : categoryid,
-                                                               string.IsNullOrEmpty(quantityperunit) ? null : quantityperunit,
-                                                               string.IsNullOrEmpty(unitprice) ? null : unitprice,
-                                                               string.IsNullOrEmpty(unitsinstock) ? null : unitsinstock,
-                                                               string.IsNullOrEmpty(unitsonorder) ? null : unitsonorder,
-                                                               string.IsNullOrEmpty(reorderlevel) ? null : reorderlevel);
+            //You may be required to do some validation using logic
+            //We will assume that supplier and category must be chosen
+            //CRUD Operations are expected to be performed with user-friendly error handling:
+            var validflag = true;
 
-            //There are only two possibilities for an insert: works OR aborts (handeld by try/catch
+            if (supplierid.Equals("0"))
+            {
+                validflag = false;
+                <p class="text-center well"><span style="color:dodgerblue">Select a supplier for the product</span></p>
+            }
+            if (categoryid.Equals("0"))
+            {
+                validflag = false;
+                <p class="text-center well"><span style="color:dodgerblue">Select a category for the product</span></p>
+            }
+            if (validflag)
+            {
+                try
+                {
+                    var insertcommand = @"INSERT INTO Products (ProductName, SupplierID, CategoryID,
+                                        QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued)
+                                        VALUES (@0, @1, @2, @3, @4, @5, @6, @7, 0)";
+                    db.Execute(insertcommand, productname, string.IsNullOrEmpty(supplierid) ? null : supplierid,
+                                                                                       string.IsNullOrEmpty(categoryid) ? null : categoryid,
+                                                                                       string.IsNullOrEmpty(quantityperunit) ? null : quantityperunit,
+                                                                                       string.IsNullOrEmpty(unitprice) ? null : unitprice,
+                                                                                       string.IsNullOrEmpty(unitsinstock) ? null : unitsinstock,
+                                                                                       string.IsNullOrEmpty(unitsonorder) ? null : unitsonorder,
+                                                                                       string.IsNullOrEmpty(reorderlevel) ? null : reorderlevel);
 
-            <p class="text-center well"><span style="color:green"><strong>Product has been added</strong><span /></p>
-            
-        }
-        catch (Exception ex)
-        {
-            <p class="text-center well"><span style="color:firebrick"><strong>@ex.Message</strong><span /></p>
+                    //There are only two possibilities for an insert: works OR aborts (handeld by try/catch
+
+                    <p class="text-center well"><span style="color:green"><strong>Product has been added</strong></span></p>
+                }
+                catch (Exception ex)
+                {
+                    <p class="text-center well"><span style="color:firebrick"><strong>@ex.Message</strong></span></p>
+                }
+            }
         }
     }
 }
+<!--
+    Step 2 of validation is to set up the display control:
+    a) You can set up a single place general display for validation
+    b) Place validation display control beside the field in question
+-->
+@Html.ValidationSummary();
 <form id="theform" method="post">
     <div class="row">
         <div class="col-md-6 text-right">
-            
-            <label for="ProductName">Name:</label><br />
+
+            <label for="ProductName">Product Name:</label><br />
             <label for="SupplierID">Supplier:</label><br />
             <label for="CategoryID">Category:</label><br />
             <label for="QuantityPerUnit">Quantity Per Unit:</label><br />
@@ -79,15 +123,56 @@
             <br />
         </div>
         <div class="col-md-6 text-left">
-           
-            <input type="text" id="ProductName" name="ProductName" value="@productname" /><br />
-            <input type="text" id="SupplierID" name="SupplierID" value="@supplierid" /><br />
-            <input type="text" id="CategoryID" name="CategoryID" value="@categoryid" /><br />
-            <input type="text" id="QuantityPerUnit" name="QuantityPerUnit" value="@quantityperunit" /><br />
-            <input type="text" id="UnitPrice" name="UnitPrice" value="@unitprice" /><br />
-            <input type="text" id="UnitsInStock" name="UnitsInStock" value="@unitsinstock" /><br />
-            <input type="text" id="UnitsOnOrder" name="UnitsOnOrder" value="@unitsonorder" /><br />
-            <input type="text" id="ReorderLevel" name="ReorderLevel" value="@reorderlevel" /><br />
+            <input type="text" id="ProductName" name="ProductName" value="@productname" />
+            @Html.ValidationMessage("ProductName")<br />
+            <select id="SupplierList" name="SupplierList">
+                <option value="0">Select Supplier</option>
+                @foreach (var item in supplierlist)
+                {
+                    //If you want a prompt on the list, then add an option
+
+                    //supplierid is the local string variable
+                    //item.SupplierID is the integer value in the selection
+                    if (supplierid == item.SupplierID.ToString())
+                    {
+                        <option value="@item.SupplierID" selected>@item.CompanyName</option>
+                    }
+                    else
+                    {
+                        <option value="@item.SupplierID">@item.CompanyName</option>
+                    }
+                }
+            </select>
+            <br />
+            <select id="CategoryList" name="CategoryList">
+                <option value="0">Select Category</option>
+                @foreach (var item in categorylist)
+                {
+                    //If you want a prompt on the list, then add an option
+
+                    //supplierid is the local string variable
+                    //item.SupplierID is the integer value in the selection
+                    if (categoryid == item.CategoryID.ToString())
+                    {
+                        <option value="@item.CategoryID" selected>@item.CategoryName</option>
+                    }
+                    else
+                    {
+                        <option value="@item.CategoryID">@item.CategoryName</option>
+                    }
+                }
+            </select><br />
+
+            <input type="text" id="QuantityPerUnit" name="QuantityPerUnit" value="@quantityperunit" />
+            <br />
+            <input type="number" step="0.01" id="UnitPrice" name="UnitPrice" value="@unitprice" />
+            <br />
+            <input type="text" id="UnitsInStock" name="UnitsInStock" value="@unitsinstock" />
+            <br />
+            <input type="text" id="UnitsOnOrder" name="UnitsOnOrder" value="@unitsonorder" />
+            <br />
+            <input type="text" id="ReorderLevel" name="ReorderLevel" value="@reorderlevel" />
+            <br />
             <br />
         </div>
     </div>
