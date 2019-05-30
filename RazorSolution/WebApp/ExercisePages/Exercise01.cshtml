@@ -1,0 +1,105 @@
+﻿@{
+    Layout = "~/_Layout.cshtml";
+    Page.Title = "EX01";
+
+    //Retrieve data from the form controls
+    //The form controls can be accessed via the Request object
+    //The Request object has several collections
+    //Form controls are found in the .Form collection
+    //a particular control is referenced by it's name in the Form collection
+    //Syntax: Request.Form["namestring"]
+    //GENERALLY ALL data from controls are strings
+
+    var customername = Request.Form["CustomerName"];
+    var thebutton = Request.Form["formbutton"]; //Retrieve the control contents
+    var choice = "";
+}
+
+@section banner{
+    <h1>Exercise01: Basic Form Processing</h1>
+}
+@if (IsPost)
+{
+    //This example demonstrates that you can delay retrieving your form data to a time you really need to have it
+    customername = Request.Form["CustomerName"];
+    if (string.IsNullOrEmpty(customername))
+    {
+        <p><span style="color:firebrick">Please enter your name:</span></p>
+    }
+    else if (thebutton.Equals("Reset"))
+    {
+        customername = "";
+    }
+    else
+    {
+        choice = Request.Form["CheckboxGroup"];
+        if (string.IsNullOrEmpty(choice))
+        {
+            <div class="col-md-offset-4">
+                <p><span style="color:firebrick">Please select your menu choices:</span></p>
+            </div>
+            choice = "";
+        }
+        @*else if (thebutton.Equals("Reset"))
+        {
+            choice = "";
+            @customername;
+        }*@
+        else
+        {
+            <p>
+                @customername, I see you have the selected the following menu items:
+
+                <ul>
+                    @foreach (var menuitem in choice.Split(','))
+                    {
+                        <li>
+                            @menuitem
+                        </li>
+                    }
+                </ul>
+            </p>
+        }
+    }
+}
+
+<!--"post" method is hidden-->
+<form id="EX01" method="post">
+    <div class="row">
+        <div class="col-md-offset-0">
+            <div class="col-md-3">
+                <label for="CustomerName" id="Name">Customer Name</label>
+                <input type="text" id="Name" name="CustomerName" placeholder="Enter Name" value="@customername" />
+                <p></p>
+            </div>
+        </div>
+        <div class="col-md-offset-4">
+            <div class="col-md-9">
+                <label id="CheckboxGrouplabel" for="CheckboxGroup">Select your meal items:</label>
+                <div class="col-sm-offset-0">
+                    <input type="checkbox" id="CheckboxGroup" name="CheckboxGroup" value="Steak"
+                           @(Array.IndexOf(choice.Split(','), "Steak") >= 0 ? "" : "") /> Steak<br />
+                    <input type="checkbox" id="CheckboxGroup" name="CheckboxGroup" value="Seafood"
+                           @(Array.IndexOf(choice.Split(','), "Seafood") >= 0 ? "" : "") /> Seafood<br />
+                    <input type="checkbox" id="CheckboxGroup" name="CheckboxGroup" value="Vegetables"
+                           @(Array.IndexOf(choice.Split(','), "Vegetables") >= 0 ? "" : "") /> Vegetables<br />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-1">
+            <br />
+            <!--submit leaves server; reset stays on browser-->
+            <input type="submit" id="formbutton" name="formbutton" class="btn btn-primary" value="Submit" />
+        </div>
+        <div class="col-md-1">
+            <br />
+            <!--submit leaves server; reset stays on browser-->
+            <input type="submit" id="formbutton" name="formbutton" class="btn" value="Reset" />
+        </div>
+    </div>
+</form>
+
+

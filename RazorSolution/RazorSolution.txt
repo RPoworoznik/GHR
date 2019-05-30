@@ -1,0 +1,376 @@
+index
+
+@{
+    Layout = "~/_Layout.cshtml";
+    Page.Title = "Home";
+}
+
+@section banner{
+    <h1>Home</h1>
+}
+
+<blockquote>This is the home page for <strong>Razor Solution</strong> project.</blockquote>
+
+@section footer{
+    <p>This is something that would appear on the footer block on the page.</p>
+}
+
+_Menu
+
+<div class="navbar-default navbar-fixed-top">
+    <!-- Branding Title>-->
+    <div class="navbar-header">
+        <a class="navbar-brand" style"font-size:x-large">
+            <strong>CPSC1517</strong>
+        </a>
+    </div>
+    <!-- Menu Items Area-->
+    <ul class="nav navbar-nav">
+        <!--Root Menu Items-->
+        <li><a href="@Href("~/index.cshtml")">Home</a></li>
+        <!--Sub-Menu (drop-down menu)-->
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                Exercises <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a href="@Href("~/ExercisePages/Exercise01.cshtml")">Exercise01</a></li>
+                <li><a href="@Href("~/ExercisePages/Exercise02_A.cshtml")">Exercise02</a></li>
+                <li><a href="@Href("~/ExercisePages/Exercise03.cshtml")">Exercise03</a></li>
+                <li><a href="@Href("~/ExercisePages/Exercise04.cshtml")">Exercise04</a></li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+_Layout
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="author" content="RPoworoznik" />
+    <meta name="description" content="Layout page for Forms and Razor examples" />
+    <title>@Page.Title</title>
+    <script src="~/Scripts/jquery-3.3.1.js"></script>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <script src="~/Scripts/bootstrap.js"></script>
+    @RenderSection("head", required: false)
+</head>
+<body>
+    <div class="container-fluid">
+        @RenderPage("~/_Menu.cshtml")
+        <div class="jumbotron">
+            @RenderSection("banner", required: true)
+        </div>
+        @RenderBody()
+
+        @RenderSection("footer", required: false)
+        <br />
+        &copy; CPSC1517 NAIT Learning Material, @DateTime.Today.ToShortDateString()
+    </div>
+</body>
+</html>
+
+Exercise01
+
+@{
+    Layout = "~/_Layout.cshtml";
+    Page.Title = "EX01";
+
+    //Retrieve data from the form controls
+    //The form controls can be accessed via the Request object
+    //The Request object has several collections
+    //Form controls are found in the .Form collection
+    //a particular control is referenced by it's name in the Form collection
+    //Syntax: Request.Form["namestring"]
+    //GENERALLY ALL data from controls are strings
+
+    var customername = Request.Form["CustomerName"];
+    var thebutton = Request.Form["formbutton"]; //Retrieve the control contents
+    var choice = "";
+}
+
+@section banner{
+    <h1>Exercise01: Basic Form Processing</h1>
+}
+@if (IsPost)
+{
+    //This example demonstrates that you can delay retrieving your form data to a time you really need to have it
+    customername = Request.Form["CustomerName"];
+    if (string.IsNullOrEmpty(customername))
+    {
+        <p><span style="color:firebrick">Please enter your name:</span></p>
+    }
+    else if (thebutton.Equals("Reset"))
+    {
+        customername = "";
+    }
+    else
+    {
+        choice = Request.Form["CheckboxGroup"];
+        if (string.IsNullOrEmpty(choice))
+        {
+            <div class="col-md-offset-4">
+                <p><span style="color:firebrick">Please select your menu choices:</span></p>
+            </div>
+            choice = "";
+        }
+        @*else if (thebutton.Equals("Reset"))
+        {
+            choice = "";
+            @customername;
+        }*@
+        else
+        {
+            <p>
+                @customername, I see you have the selected the following menu items:
+
+                <ul>
+                    @foreach (var menuitem in choice.Split(','))
+                    {
+                        <li>
+                            @menuitem
+                        </li>
+                    }
+                </ul>
+            </p>
+        }
+    }
+}
+
+<!--"post" method is hidden-->
+<form id="EX01" method="post">
+    <div class="row">
+        <div class="col-md-offset-0">
+            <div class="col-md-3">
+                <label for="CustomerName" id="Name">Customer Name</label>
+                <input type="text" id="Name" name="CustomerName" placeholder="Enter Name" value="@customername" />
+                <p></p>
+            </div>
+        </div>
+        <div class="col-md-offset-4">
+            <div class="col-md-9">
+                <label id="CheckboxGrouplabel" for="CheckboxGroup">Select your meal items:</label>
+                <div class="col-sm-offset-0">
+                    <input type="checkbox" id="CheckboxGroup" name="CheckboxGroup" value="Steak"
+                           @(Array.IndexOf(choice.Split(','), "Steak") >= 0 ? "" : "") /> Steak<br />
+                    <input type="checkbox" id="CheckboxGroup" name="CheckboxGroup" value="Seafood"
+                           @(Array.IndexOf(choice.Split(','), "Seafood") >= 0 ? "" : "") /> Seafood<br />
+                    <input type="checkbox" id="CheckboxGroup" name="CheckboxGroup" value="Vegetables"
+                           @(Array.IndexOf(choice.Split(','), "Vegetables") >= 0 ? "" : "") /> Vegetables<br />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-1">
+            <br />
+            <!--submit leaves server; reset stays on browser-->
+            <input type="submit" id="formbutton" name="formbutton" class="btn btn-primary" value="Submit" />
+        </div>
+        <div class="col-md-1">
+            <br />
+            <!--submit leaves server; reset stays on browser-->
+            <input type="submit" id="formbutton" name="formbutton" class="btn" value="Reset" />
+        </div>
+    </div>
+</form>
+
+Exercise02_A
+
+@@{
+    //Need microsoft.aspnet.webpages.(web)data
+    Layout = "~/_Layout.cshtml";
+    Page.Title = "Search Artist";
+
+    var searcharg = Request.Form["SearchArg"];
+    var thebutton = Request.Form["formbutton"];//change all to FormButton later
+
+
+    var db = Database.Open("CKDB");
+
+    var querycommand = @"SELECT ArtistID
+        FROM Artists
+        WHERE Name like @0";
+
+    var datainfo = db.QuerySingle(querycommand, "%" + searcharg + "%");
+}
+
+@section banner{
+    <h1>Database: Artist Search</h1>
+}
+@if (IsPost)
+{
+    if (thebutton.Equals("Clear"))
+    {
+        searcharg = "";
+    }
+    else
+    {
+
+        if (string.IsNullOrEmpty(searcharg))
+        {
+            <p><span style="color:dodgerblue">Please enter the name of an artist:@searcharg</span></p>
+        }
+
+        else if (datainfo == null)
+        {
+            <p><span style="color:dodgerblue">No name found for the artist entered:@searcharg</span></p>
+        }
+        else
+        {
+            Response.Redirect("Exercise02_B.cshtml?cid=" + searcharg);
+        }
+    }
+}
+
+<form id="theForm" method="post">
+
+    <div class="row">
+        <div class="col-md-offset-1">
+            <label for="searchArg" id="label1">Enter Artist Name</label>
+            <input type="text" id="searchArg" name="searchArg" value="@searcharg" placeholder="Enter Artist Name" />
+            <br />
+            <br />
+            <input type="submit" id="formbutton" name="formbutton" class="btn btn-primary" value="Fetch Artist" />&nbsp;&nbsp;
+            <input type="submit" id="formbutton" name="formbutton" class="btn" value="Clear" />&nbsp;&nbsp;
+        </div>
+    </div>       
+</form>
+
+
+
+Exercise02_B
+
+@{
+
+    Layout = "~/_Layout.cshtml";
+    Page.Title = "Multi-Artist Query";
+
+    var db = Database.Open("CKDB");
+    var searcharg = Request.QueryString["cid"];
+    searcharg = "%" + searcharg + "%";
+    var querycommand = @"SELECT ArtistID, Name
+            FROM Artists
+            WHERE Name like @0
+            ORDER BY Name";
+    
+    var datainfo = db.Query(querycommand, searcharg);
+}
+@section banner{
+    <h1>Database: Multiple Artist Query</h1>
+}
+@if (IsPost)
+{
+    var choice = Request.Form["ArtistList"];
+
+    if (choice.Equals("0"))
+    {
+        <p><span style="color:red">Please select an artist...</span></p>
+    }
+    else
+    {
+        Response.Redirect("Exercise02_C.cshtml?cid=" + choice);
+    }
+}
+
+<form id="theform" method="post">
+    <div class="col-md-offset-3">
+        <label for="ArtistList" id="ArtistListLabel">
+            Select the Artist to view:
+        </label>&nbsp;
+        <select id="ArtistList" name="ArtistList">
+            <option value="0">
+                Select Option:
+            </option>
+            @foreach (var rowitem in datainfo)
+            {
+                <option value="@rowitem.ArtistID">
+                    @rowitem.Name
+                </option>
+            }
+        </select>&nbsp;
+        <input type="submit" id="formbutton" name="formbutton" class="btn btn-primary" value="Fetch Album" />&nbsp;&nbsp;
+    </div>
+</form>
+
+Exercise02_C
+
+@{
+    Layout = "~/_Layout.cshtml";
+    Page.Title = "Multi-Artist Web Grid";
+
+
+    var cid = Request.QueryString["cid"];
+
+
+    if (string.IsNullOrEmpty(cid))
+    {
+        Response.Redirect("Exercise02_B.cshtml");
+    }
+
+    var db = Database.Open("CKDB");
+    var querycommand = @"SELECT Name
+        FROM Artists
+        WHERE ArtistID = @0";
+
+    var querycommand2 = @"SELECT AlbumID, Title, ReleaseYear, ReleaseLabel
+        FROM Albums
+        WHERE ArtistID = @0
+        ORDER BY Title";
+
+    var datainfo = db.Query(querycommand, cid);
+    var datainfo2 = db.Query(querycommand2, cid);
+
+
+    var gridinstance = new WebGrid(datainfo);
+    var gridinstance2 = new WebGrid(datainfo2);
+}
+@section banner{
+    <h1>Exercise 2: Database Query</h1>
+}
+<!--<span style="font-size:xx-large"><strong>Database: WebGrid</strong></span>-->
+<br />
+<div class="row">
+    <div class="col-md-offset-1">
+        <span style="font-size:x-large">Albums by @cid</span>
+        <!--default WebGrid-->
+        @gridinstance.GetHtml()
+        @gridinstance2.GetHtml()
+    </div>
+</div>
+
+
+
+
+
+
+WebConnectionStrings.config
+
+<!--<connectionStrings>
+  <add name="CKDB"
+       connectionString="Data Source=.;Initial Catalog=Chinook; Integrated Security=true"
+      providerName="System.Data.SqlClient"/>
+</connectionStrings>-->
+
+<connectionStrings>
+  <add name="CKDB"
+       connectionString="Data Source=DESKTOP-HP\SQLExpress;Initial Catalog=Chinook; Integrated Security=true"
+      providerName="System.Data.SqlClient"/>
+</connectionStrings>
+
+Web.cofig
+
+//<configuration>
+  <connectionStrings configSource="WebConnectionStrings.config"></connectionStrings>
+  //<system.web>
+
+
+
+
+
+
+
+
+

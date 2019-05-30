@@ -1,0 +1,51 @@
+﻿@{
+
+    Layout = "~/_Layout.cshtml";
+    Page.Title = "Multi-Artist Query";
+
+    var db = Database.Open("CKDB");
+    var searcharg = Request.QueryString["cid"];
+    searcharg = "%" + searcharg + "%";
+    var querycommand = @"SELECT ArtistID, Name
+            FROM Artists
+            WHERE Name like @0
+            ORDER BY Name";
+    
+    var datainfo = db.Query(querycommand, searcharg);
+}
+@section banner{
+    <h1>Database: Multiple Artist Query</h1>
+}
+@if (IsPost)
+{
+    var choice = Request.Form["ArtistList"];
+
+    if (choice.Equals("0"))
+    {
+        <p><span style="color:red">Please select an artist...</span></p>
+    }
+    else
+    {
+        Response.Redirect("Exercise02_C.cshtml?cid=" + choice);
+    }
+}
+
+<form id="theform" method="post">
+    <div class="col-md-offset-3">
+        <label for="ArtistList" id="ArtistListLabel">
+            Select the Artist to view:
+        </label>&nbsp;
+        <select id="ArtistList" name="ArtistList">
+            <option value="0">
+                Select Option:
+            </option>
+            @foreach (var rowitem in datainfo)
+            {
+                <option value="@rowitem.ArtistID">
+                    @rowitem.Name
+                </option>
+            }
+        </select>&nbsp;
+        <input type="submit" id="formbutton" name="formbutton" class="btn btn-primary" value="Fetch Album" />&nbsp;&nbsp;
+    </div>
+</form>

@@ -1,0 +1,67 @@
+﻿@{
+    Layout = "~/_Layout.cshtml";
+    Page.Title = "Multi-Artist Web Grid";
+
+
+    var cid = Request.QueryString["cid"];
+
+
+    if (string.IsNullOrEmpty(cid))
+    {
+        Response.Redirect("Exercise02_B.cshtml");
+    }
+
+    var db = Database.Open("CKDB");
+
+    var queryArtists = @"SELECT Name
+                          FROM Artists
+                          WHERE ArtistID = @0";
+    var artistname = db.QueryValue(queryArtists, cid);
+
+    var querycommand2 = @"SELECT AlbumID, Title, ReleaseYear, ReleaseLabel
+        FROM Albums
+        WHERE ArtistID = @0
+        ORDER BY Title";
+  
+    var datainfo2 = db.Query(querycommand2, cid);
+   
+    var gridinstance2 = new WebGrid(datainfo2);
+}
+@section banner{
+    <h1>Exercise 2: Database Query</h1>
+}
+<!--<span style="font-size:xx-large"><strong>Database: WebGrid</strong></span>-->
+<br />
+<div class="row">
+    <div class="col-md-offset-1">
+        <span style="font-size:x-large">Albums by @artistname</span>
+        @if (datainfo2.Count() == 0)
+        {
+            <p>No albums exist for this artist</p>
+        }
+        else
+        {
+
+
+        <!--default WebGrid-->
+        @gridinstance2.GetHtml(tableStyle: "table table-bordered table-striped table-hover",
+                                   mode: WebGridPagerModes.All,
+                                   firstText: "Start", lastText: "End",
+                                   columns: gridinstance2.Columns(gridinstance2.Column(columnName: "AlbumID", header: "ID",
+                                   canSort: true),
+                                   gridinstance2.Column(columnName: "Title", header: "Title",
+                                   canSort: true),
+                                   gridinstance2.Column(columnName: "ReleaseYear", header: "Released",
+                                   canSort: true),
+                                   gridinstance2.Column(columnName: "ReleaseLabel", header: "Label",
+                                   canSort: true)))
+        }
+        <br />
+        <a href="Exercise02_A.cshtml">Back to Search</a>
+
+    </div>
+</div>
+
+
+
+

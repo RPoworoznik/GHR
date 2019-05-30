@@ -1,0 +1,60 @@
+﻿@{
+    //Need microsoft.aspnet.webpages.(web)data
+    Layout = "~/_Layout.cshtml";
+    Page.Title = "Search Artist";
+
+    var searcharg = Request.Form["SearchArg"];
+    var thebutton = Request.Form["formbutton"];//change all to FormButton later
+
+
+    var db = Database.Open("CKDB");
+
+    var querycommand = @"SELECT ArtistID
+        FROM Artists
+        WHERE Name like @0";
+
+    var datainfo = db.QuerySingle(querycommand, "%" + searcharg + "%");
+}
+
+@section banner{
+    <h1>Database: Artist Search</h1>
+}
+@if (IsPost)
+{
+    if (thebutton.Equals("Clear"))
+    {
+        searcharg = "";
+    }
+    else
+    {
+
+        if (string.IsNullOrEmpty(searcharg))
+        {
+            <p><span style="color:dodgerblue">Please enter the name of an artist:@searcharg</span></p>
+        }
+
+        else if (datainfo == null)
+        {
+            <p><span style="color:dodgerblue">No name found for the artist entered:@searcharg</span></p>
+        }
+        else
+        {
+            Response.Redirect("Exercise02_B.cshtml?cid=" + searcharg);
+        }
+    }
+}
+
+<form id="theForm" method="post">
+
+    <div class="row">
+        <div class="col-md-offset-1">
+            <label for="searchArg" id="label1">Enter Artist Name</label>
+            <input type="text" id="searchArg" name="searchArg" value="@searcharg" placeholder="Enter Artist Name" />
+            <br />
+            <br />
+            <input type="submit" id="formbutton" name="formbutton" class="btn btn-primary" value="Fetch Artist" />&nbsp;&nbsp;
+            <input type="submit" id="formbutton" name="formbutton" class="btn" value="Clear" />&nbsp;&nbsp;
+        </div>
+    </div>       
+</form>
+

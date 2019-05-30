@@ -1,0 +1,57 @@
+﻿@{
+    Layout = "~/_Layout.cshtml";
+    Page.Title = "CheckBoxes";
+
+    var choice = "";
+}
+
+@section banner{
+    <h1>CheckBoxes</h1>
+}
+@if (IsPost)
+{
+    //This exampke demonstrates that you can delay retrieving your form data to a time you really need to have it
+    choice = Request.Form["CheckBoxGroup"];
+    if (string.IsNullOrEmpty(choice))
+    {
+        <p><span style="color:firebrick">Make a selection from the platform choices</span></p>
+        choice = "";
+    }
+    else
+    {
+        <p>
+            I see you you like to use the following platforms:
+            <ul>
+                @foreach (var platform in choice.Split(','))
+                {
+                    <li>
+                        @platform
+                    </li>
+                }
+            </ul>
+        </p>
+    }
+}
+<form id="theform" method="post">
+    <div class="row">
+        <div class="col-sm-offset-1">
+            <label id="CheckboxGrouplabel" for="CheckboxGroup">
+                Select your favourite gaming platforms:
+            </label>
+
+            <input type="checkbox" id="CheckboxGroup" name="CheckboxGroup" value="PS4"
+                   @(Array.IndexOf(choice.Split(','), "PS4") >= 0 ? "checked" : "") />PS4<br />
+            <input type="checkbox" id="CheckboxGroup" name="CheckboxGroup" value="Cell Phone"
+                   @(Array.IndexOf(choice.Split(','), "Cell Phone") >= 0 ? "checked" : "") />Phone<br />
+            <input type="checkbox" id="CheckboxGroup" name="CheckboxGroup" value="NDS"
+                   @(Array.IndexOf(choice.Split(','), "Nintendo DS") >= 0 ? "checked" : "") />Nintendo <br />
+            <input type="checkbox" id="CheckboxGroup" name="CheckboxGroup" value="Wii"
+                   @(Array.IndexOf(choice.Split(','), "Wii") >= 0 ? "checked" : "") />Wii<br />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-offset-1">
+            <input type="submit" class="btn btn-primary" id="formButton" name="formButton" />
+        </div>
+    </div>
+</form>
