@@ -10,8 +10,9 @@
             FROM Artists
             WHERE Name like @0
             ORDER BY Name";
-    
+
     var datainfo = db.Query(querycommand, searcharg);
+    var thebutton = Request.Form["formbutton"];
 }
 @section banner{
     <h1>Database: Multiple Artist Query</h1>
@@ -24,7 +25,12 @@
     {
         <p><span style="color:red">Please select an artist...</span></p>
     }
+    if (thebutton.Equals("Back"))
+    {
+        Response.Redirect("Exercise02_A.cshtml");
+    }
     else
+
     {
         Response.Redirect("Exercise02_C.cshtml?cid=" + choice);
     }
@@ -47,5 +53,7 @@
             }
         </select>&nbsp;
         <input type="submit" id="formbutton" name="formbutton" class="btn btn-primary" value="Fetch Album" />&nbsp;&nbsp;
+        <input type="submit" id="formbutton" name="formbutton" class="btn" value="Back" />&nbsp;&nbsp;
+        
     </div>
 </form>

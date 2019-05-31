@@ -1,0 +1,126 @@
+﻿@{
+    Layout = "~/_Layout.cshtml";
+    Page.Title = "CRUD Page";
+
+
+    var albumtitle = "";
+    var artistname = "";
+    var releaseyear = "";
+    var releaselabel = "";
+
+    var thebutton = Request.Form["formbutton"];
+
+
+    var db = Database.Open("CKDB");
+    var artistquery = @"SELECT ArtistID, Name
+                        FROM Artists
+                        ORDER BY Name";
+    var artistlist = db.Query(artistquery);
+
+    Validation.Add("Title", Validator.Required("Title is required"),
+        Validator.StringLength(10, 1, "Title is limited to 160 characters"));
+    Validation.Add("ReleaseYear",
+        Validator.Required("Please enter year released"), Validator.Range(1950, DateTime.Today.Year,
+        "Year released must be between 1950 and present"));
+    Validation.Add("ReleaseLabel", Validator.StringLength(50, 1, "Label name is limited to 50 characters"));
+
+}
+@section banner
+{
+    <h1>Exercise 3: Database Data Entry</h1>
+}
+
+<h2>&nbsp; &nbsp;&nbsp;Enter Album</h2><br />
+@if (IsPost)
+{
+
+    if (thebutton.Equals("Clear"))
+    {
+        <p></p>
+    }
+    else
+    {
+        albumtitle = Request.Form["Title"];
+        artistname = Request.Form["ArtistList"];
+        releaseyear = Request.Form["ReleaseYear"];
+        releaselabel = Request.Form["ReleaseLabel"];
+
+        if (Validation.IsValid())
+        {
+            var validflag = true;
+                 
+            if (artistname.Equals("0"))
+            {
+                validflag = false;
+                <p class="text-center well"><span style="color:dodgerblue"> Select an artist...</span></p>
+            }
+            
+            if (validflag)
+            {
+                try
+                {
+                    var insertcommand = @"INSERT INTO Albums (Title, ArtistID, ReleaseYear, ReleaseLabel)
+                                        VALUES (@0, @1, @2, @3)";
+                    db.Execute(insertcommand, albumtitle, string.IsNullOrEmpty(albumtitle) ? null : albumtitle,
+                                                          string.IsNullOrEmpty(artistname) ? null : artistname,
+                                                          string.IsNullOrEmpty(releaseyear) ? null : releaseyear,
+                                                          string.IsNullOrEmpty(releaselabel) ? null : releaselabel);
+
+                    <p class="text-center well"><span style="color:green"><strong>Album has been added</strong></span></p>
+                }
+                catch (Exception ex)
+                {
+                    <p class="text-center well">
+                        <span style="color:firebrick">
+                            <strong> @ex.Message </strong>
+                        </span>
+                    </p>
+                }
+            }
+        }
+    }
+}
+
+@Html.ValidationSummary()
+<form id="theform" method="post">
+    <div class="row">
+        <div class="col-md-1 text-right">
+            <label for="Title">Title:</label><br />
+            <label for="ArtistID">Artist:</label><br />
+            <label for="ReleaseYear">Year:</label><br />
+            <label for="ReleaseLabel">Label:</label><br />
+            <br />
+        </div>
+        <div class="col-md-1 text-left">
+            <input type="text" id="Title" name="Title" value="@albumtitle" /><br />
+
+            <select id="ArtistList" name="ArtistList">
+                <option value="0">Select Artist...</option>
+                @foreach (var item in artistlist)
+                {
+                    if (artistname == item.ArtistID.ToString())
+                    {
+                        <option value="@item.ArtistID" selected>@item.Name</option>
+                    }
+                    else
+                    {
+                        <option value="@item.ArtistID">@item.Name</option>
+                    }
+                }
+            </select>
+            <br />
+            <input type="number" step="1" id="ReleaseYear" name="ReleaseYear" value="@releaseyear" />
+            <br />
+            <input type="text" id="ReleaseLabel" name="ReleaseLabel" value="@releaselabel" />
+            <br />
+            <br />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2 text-right">
+            <input type="submit" id="formbutton" name="formbutton" class="btn btn-primary" value="Add" />
+            <input type="submit" id="formbutton" name="formbutton" class="btn" value="Clear" />
+        </div>
+    </div>
+</form>
+

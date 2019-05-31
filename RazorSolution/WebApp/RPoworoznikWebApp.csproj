@@ -110,13 +110,11 @@
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="ExercisePages\CheckBoxes.cshtml" />
-    <Content Include="ExercisePages\RadioButtons.cshtml" />
-    <Content Include="ExercisePages\DropDownList.cshtml" />
     <Content Include="ExercisePages\Exercise01.cshtml" />
     <Content Include="ExercisePages\Exercise02_A.cshtml" />
     <Content Include="ExercisePages\Exercise02_B.cshtml" />
     <Content Include="ExercisePages\Exercise02_C.cshtml" />
+    <Content Include="ExercisePages\Exercise03.cshtml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
@@ -124,7 +122,9 @@
     <Content Include="Scripts\jquery-3.3.1.slim.min.js" />
     <Content Include="Web.config" />
     <Content Include="_Menu.cshtml" />
-    <Content Include="WebConnectionStrings.config" />
+    <Content Include="WebConnectionStrings.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
