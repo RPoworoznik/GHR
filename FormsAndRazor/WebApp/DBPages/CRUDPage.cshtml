@@ -88,9 +88,9 @@ ORDER BY CategoryName";
                                                                                        string.IsNullOrEmpty(unitprice) ? null : unitprice,
                                                                                        string.IsNullOrEmpty(unitsinstock) ? null : unitsinstock,
                                                                                        string.IsNullOrEmpty(unitsonorder) ? null : unitsonorder,
-                                                                                       string.IsNullOrEmpty(reorderlevel) ? null : reorderlevel);
+                                                                                       string.IsNullOrEmpty(reorderlevel) ? null : reorderlevel, 0);
 
-                    //There are only two possibilities for an insert: works OR aborts (handeld by try/catch
+                    //There are only two possibilities for an insert: works OR aborts (handled by try/catch)
 
                     <p class="text-center well"><span style="color:green"><strong>Product has been added</strong></span></p>
                 }
